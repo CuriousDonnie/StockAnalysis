@@ -14,7 +14,7 @@ else:
 st.set_page_config(page_title="Donnie's Stock Analysis", layout="wide")
 
 # --- Sidebar ---
-st.sidebar.header("Audit Controls")
+st.sidebar.header("Stock")
 ticker = st.sidebar.text_input("Enter Ticker", value="AAPL").upper()
 
 # --- Main App ---
@@ -33,6 +33,68 @@ if ticker:
         tab1, tab2, tab3 = st.tabs(["Income Statement", "Balance Sheet", "Risk Factors"])
 
         with tab1:
+                    
+            def get_income_dataframe(ticker:str):
+                filings = company.get_filings(form="10-K").latest(5)
+                xbs = XBRLS.from_filings(filings)
+                income_statement = xbs.statements.income_statement()
+                income_df = income_statement.to_dataframe()
+                return income_df
+
+
+            def plot_revenue(ticker:str):
+                income_df = get_income_dataframe(ticker)
+
+                # Extract financial metrics
+                net_income = income_df[income_df.concept == "us-gaap_NetIncomeLoss"][income_statement.periods].iloc[0]
+                gross_profit = income_df[income_df.concept == "us-gaap_GrossProfit"][income_statement.periods].iloc[0]
+                revenue = income_df[income_df.label == "Revenue"][income_statement.periods].iloc[0]
+
+                # Convert periods to fiscal years for better readability
+                periods = [pd.to_datetime(period).strftime('FY%y') for period in income_statement.periods]
+
+                # Reverse the order so most recent years are last (oldest to newest)
+                periods = periods[::-1]
+                revenue_values = revenue.values[::-1]
+                gross_profit_values = gross_profit.values[::-1]
+                net_income_values = net_income.values[::-1]
+
+                # Create a DataFrame for plotting
+                plot_data = pd.DataFrame({
+                    'Revenue': revenue_values,
+                    'Gross Profit': gross_profit_values,
+                    'Net Income': net_income_values
+                }, index=periods)
+
+                # Convert to billions for better readability
+                plot_data = plot_data / 1e9
+
+                # Create the figure
+                fig, ax = plt.subplots(figsize=(10, 6))
+
+                # Plot the data as lines with markers
+                plot_data.plot(kind='line', marker='o', ax=ax, linewidth=2.5)
+
+                # Format the y-axis to show billions with 1 decimal place
+                ax.yaxis.set_major_formatter(mtick.FuncFormatter(lambda x, _: f'${x:.1f}B'))
+
+                # Add labels and title
+                ax.set_xlabel('Fiscal Year')
+                ax.set_ylabel('Billions USD')
+                ax.set_title(f'{company.name} ({ticker}) Financial Performance')
+
+                # Add a grid for better readability
+                ax.grid(True, linestyle='--', alpha=0.7)
+
+                # Add a source note
+                plt.figtext(0.5, 0.01, 'Source: SEC EDGAR via edgartools', ha='center', fontsize=9)
+
+                # Improve layout
+                plt.tight_layout(rect=[0, 0.03, 1, 0.97])
+
+                return fig
+
+
             # Extract and display the income statement
             income_df = financials.income_statement().to_dataframe()
             st.dataframe(income_df, use_container_width=True)
