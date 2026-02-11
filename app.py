@@ -6,9 +6,12 @@ from fpdf import FPDF
 import io
 
 # 1. REQUIRED: Tell the SEC who you are
-set_identity("hhuang5@zagmail.gonzaga.edu") # Use your real email
+if "SEC_EMAIL" in st.secrets:
+    set_identity(st.secrets["SEC_EMAIL"])
+else:
+    print("Email failed.")
 
-st.set_page_config(page_title="Audit Workbench", layout="wide")
+st.set_page_config(page_title="Donnie's Stock Analysis", layout="wide")
 
 # --- Sidebar ---
 st.sidebar.header("Audit Controls")
