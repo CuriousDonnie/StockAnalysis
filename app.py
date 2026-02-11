@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from edgar import Company, set_identity
+from edgar.xbrl import XBRLS
 from fpdf import FPDF
 import io
 
