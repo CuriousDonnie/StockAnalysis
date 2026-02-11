@@ -38,11 +38,11 @@ if ticker:
 
         with tab1:
             # Extract and display the income statement
-            income_df = financials.income_statement.to_dataframe()
+            income_df = financials.income_statement().to_dataframe()
             st.dataframe(income_df, use_container_width=True)
             
             # Simple Revenue Metric for the header
-            revenue = financials.get_revenue()
+            balance_df = financials.balance_sheet().to_dataframe()
             st.metric("Latest Annual Revenue", f"${revenue:,.0f}")
 
         with tab2:
