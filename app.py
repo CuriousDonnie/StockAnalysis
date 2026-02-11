@@ -5,13 +5,6 @@ from edgar import Company, set_identity
 from fpdf import FPDF
 import io
 
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-from edgar import Company, set_identity
-from fpdf import FPDF
-import io
-
 # 1. REQUIRED: Tell the SEC who you are
 set_identity("hhuang5@zagmail.gonzaga.edu") # Use your real email
 
