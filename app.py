@@ -33,75 +33,52 @@ if ticker:
         tab1, tab2, tab3 = st.tabs(["Income Statement", "Balance Sheet", "Risk Factors"])
 
         with tab1:
-                    
+            # 1. Define the Data Fetching (Keep this as is)
             def get_income_dataframe(ticker:str):
+                from edgar import XBRLS # Ensure XBRLS is available
                 filings = company.get_filings(form="10-K").latest(5)
                 xbs = XBRLS.from_filings(filings)
-                income_statement = xbs.statements.income_statement()
-                income_df = income_statement.to_dataframe()
-                return income_df
+                income_stmt = xbs.statements.income_statement()
+                return income_stmt, income_stmt.to_dataframe()
 
-
+            # 2. Define the Plotting Function (Fixed Streamlit Integration)
             def plot_revenue(ticker:str):
-                income_df = get_income_dataframe(ticker)
+                import matplotlib.pyplot as plt
+                import matplotlib.ticker as mtick
+                
+                income_stmt, income_df = get_income_dataframe(ticker)
+                periods_list = income_stmt.periods
+                
+                # Extract metrics using the labels/concepts
+                net_income = income_df[income_df.concept == "us-gaap_NetIncomeLoss"][periods_list].iloc[0]
+                revenue = income_df[income_df.label == "Revenue"][periods_list].iloc[0]
 
-                # Extract financial metrics
-                net_income = income_df[income_df.concept == "us-gaap_NetIncomeLoss"][income_statement.periods].iloc[0]
-                gross_profit = income_df[income_df.concept == "us-gaap_GrossProfit"][income_statement.periods].iloc[0]
-                revenue = income_df[income_df.label == "Revenue"][income_statement.periods].iloc[0]
+                # Formatting data
+                periods = [pd.to_datetime(p).strftime('FY%y') for p in periods_list][::-1]
+                rev_vals = revenue.values[::-1] / 1e9 # Billions
+                ni_vals = net_income.values[::-1] / 1e9
 
-                # Convert periods to fiscal years for better readability
-                periods = [pd.to_datetime(period).strftime('FY%y') for period in income_statement.periods]
-
-                # Reverse the order so most recent years are last (oldest to newest)
-                periods = periods[::-1]
-                revenue_values = revenue.values[::-1]
-                gross_profit_values = gross_profit.values[::-1]
-                net_income_values = net_income.values[::-1]
-
-                # Create a DataFrame for plotting
-                plot_data = pd.DataFrame({
-                    'Revenue': revenue_values,
-                    'Gross Profit': gross_profit_values,
-                    'Net Income': net_income_values
-                }, index=periods)
-
-                # Convert to billions for better readability
-                plot_data = plot_data / 1e9
-
-                # Create the figure
-                fig, ax = plt.subplots(figsize=(10, 6))
-
-                # Plot the data as lines with markers
-                plot_data.plot(kind='line', marker='o', ax=ax, linewidth=2.5)
-
-                # Format the y-axis to show billions with 1 decimal place
+                # CREATE THE FIGURE
+                fig, ax = plt.subplots(figsize=(10, 5))
+                ax.plot(periods, rev_vals, marker='o', label='Revenue', linewidth=2)
+                ax.plot(periods, ni_vals, marker='s', label='Net Income', linestyle='--')
+                
                 ax.yaxis.set_major_formatter(mtick.FuncFormatter(lambda x, _: f'${x:.1f}B'))
-
-                # Add labels and title
-                ax.set_xlabel('Fiscal Year')
-                ax.set_ylabel('Billions USD')
-                ax.set_title(f'{company.name} ({ticker}) Financial Performance')
-
-                # Add a grid for better readability
-                ax.grid(True, linestyle='--', alpha=0.7)
-
-                # Add a source note
-                plt.figtext(0.5, 0.01, 'Source: SEC EDGAR via edgartools', ha='center', fontsize=9)
-
-                # Improve layout
-                plt.tight_layout(rect=[0, 0.03, 1, 0.97])
-
+                ax.set_title(f"{ticker} Financial Performance")
+                ax.legend()
+                ax.grid(True, alpha=0.3)
+                
                 return fig
 
-
-            # Extract and display the income statement
-            income_df = financials.income_statement().to_dataframe()
-            st.dataframe(income_df, use_container_width=True)
+            # 3. ACTUALLY CALL AND SHOW THE STUFF
+            # Show the table
+            income_stmt_obj, income_df_table = get_income_dataframe(ticker)
+            st.dataframe(income_df_table, use_container_width=True)
             
-            # Simple Revenue Metric for the header
-            balance_df = financials.balance_sheet().to_dataframe()
-            st.metric("Latest Annual Revenue", f"${revenue:,.0f}")
+            # SHOW THE GRAPH
+            st.markdown("### Performance Visual")
+            financial_fig = plot_revenue(ticker)
+            st.pyplot(financial_fig) # <--- THIS IS WHAT MAKES IT POP UP
 
         with tab2:
             balance_df = financials.balance_sheet.to_dataframe()
