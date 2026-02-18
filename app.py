@@ -26,23 +26,20 @@ if ticker:
         st.subheader(f"{company.name} | CIK: {company.cik} | Industry: {company.industry}")
         
         # Get latest 10-K financials
-        filings = company.get_filings(form="10-K")
-        latest_10k = company.get_filings(form="10-K").latest()
-        financials = latest_10k.obj()
+        filing = company.get_filings(form="10-K").latest()
+        latest_ten_k = filing.obj()
+        financials = latest_ten_k.financials
         
         # --------------------------------- #
         
         # Commands
 
-        general_metrics = financials
-
-        income_statement = general_metrics.get('income')
-        balance_sheet = general_metrics.get('balance_sheet')
-        cash_flow = general_metrics.get('balance_sheet')
+        income_statement = financials.income_statement
+        balance_sheet = financials.balance_sheet
+        cash_flow = financials.cash_flow_statement
         
-        specific_metrics = financials.get_financial_metrics()
-        curr_assets = specific_metrics.get('income', 0)
-        curr_liabs = specific_metrics.get('current_liabilities', 1)
+        curr_assets = financials.get('income', 0)
+        curr_liabs = financials.get('current_liabilities', 1)
         current_ratio = curr_assets / curr_liabs
         
         # Main Page
@@ -50,8 +47,8 @@ if ticker:
         st.markdown("### Risk Factors")
         st.info("Reading Item 1A is critical for assessing 'Going Concern' risk.")
             # Show first 3000 characters for quick review
-        risk_factors = latest_10k.section('ITEM 1A')
-        st.write(financials.risk_factors[:3000] + "...")
+        risk_factors = latest_ten_j.risk_factors
+        st.write(filing.risk_factors[:3000] + "...")
 
         # Tabs
         tab1, tab2, tab3 = st.tabs(["Income Statement", "Balance Sheet", "Cash Flow"])
@@ -83,6 +80,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
