@@ -56,7 +56,7 @@ if ticker:
 
         with tab1:
             st.markdown("### Income Statement")
-            income_df = income_statement.to_dataframe()
+            income_df = income_statement().to_dataframe()
             st.dataframe(income_df, use_container_width=True)
             
             # Simple visualization
@@ -67,12 +67,12 @@ if ticker:
 
         with tab2:
             st.markdown("### Balance Sheet")
-            balance_df = balance_sheet.to_dataframe()
+            balance_df = balance_sheet().to_dataframe()
             st.dataframe(balance_df, use_container_width=True)
 
         with tab3:
             st.markdown("### Cash Flow")
-            cash_df = cash_flow.to_dataframe()
+            cash_df = cash_flow().to_dataframe()
             st.dataframe(cash_df, use_container_width=True)
 
     except Exception as e:
@@ -81,6 +81,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
