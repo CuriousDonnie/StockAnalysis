@@ -44,14 +44,19 @@ if ticker:
         st.info("Reading Item 1A is critical for assessing 'Going Concern' risk.")
             # Show first 3000 characters for quick review
         risk_factors_text = latest_ten_k.risk_factors
-        st.write(risk_factors_text[:3000] + "...")
+
+        with st.expander("Risk Factors"):
+            if risk_factors_text:
+                st.write(risk_factors_text[:10000] + "...")
+            else:
+                st.warning("Risk Factors text not found in this filing.")
 
         # Tabs
         tab1, tab2, tab3 = st.tabs(["Income Statement", "Balance Sheet", "Cash Flow"])
 
         with tab1:
             st.markdown("### Income Statement")
-            income_df = financials.income_statement.to_dataframe()
+            income_df = income_statement.to_dataframe()
             st.dataframe(income_df, use_container_width=True)
             
             # Simple visualization
@@ -62,12 +67,12 @@ if ticker:
 
         with tab2:
             st.markdown("### Balance Sheet")
-            balance_df = financials.balance_sheet.to_dataframe()
+            balance_df = balance_sheet.to_dataframe()
             st.dataframe(balance_df, use_container_width=True)
 
         with tab3:
             st.markdown("### Cash Flow")
-            cash_df = financials.cash_flow_statement.to_dataframe()
+            cash_df = cash_flow.to_dataframe()
             st.dataframe(cash_df, use_container_width=True)
 
     except Exception as e:
@@ -76,6 +81,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
