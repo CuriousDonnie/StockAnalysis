@@ -44,7 +44,7 @@ if ticker:
         st.info("Reading Item 1A is critical for assessing 'Going Concern' risk.")
             # Show first 3000 characters for quick review
         risk_factors_text = latest_ten_k.risk_factors
-        st.write(risk_factors_text.risk_factors[:3000] + "...")
+        st.write(risk_factors_text[:3000] + "...")
 
         # Tabs
         tab1, tab2, tab3 = st.tabs(["Income Statement", "Balance Sheet", "Cash Flow"])
@@ -76,6 +76,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
