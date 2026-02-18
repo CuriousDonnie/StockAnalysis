@@ -26,8 +26,9 @@ if ticker:
         st.subheader(f"{company.name} | CIK: {company.cik} | Industry: {company.industry}")
         
         # Get latest 10-K financials
-        filing = company.latest_tenk
-        financials = filing.financials
+        filing = company.get_filings(form="10-K").latest()
+        latest_ten_k = filing.obj()       
+        financials = latest_ten_k.financials
         
         # --------------------------------- #
         
@@ -42,7 +43,7 @@ if ticker:
         st.markdown("### Risk Factors")
         st.info("Reading Item 1A is critical for assessing 'Going Concern' risk.")
             # Show first 3000 characters for quick review
-        risk_factors = latest_ten_j.risk_factors
+        risk_factors = latest_ten_k.risk_factors
         st.write(filing.risk_factors[:3000] + "...")
 
         # Tabs
@@ -75,6 +76,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
