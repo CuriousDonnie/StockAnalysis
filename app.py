@@ -26,21 +26,16 @@ if ticker:
         st.subheader(f"{company.name} | CIK: {company.cik} | Industry: {company.industry}")
         
         # Get latest 10-K financials
-        filing = company.get_filings(form="10-K").latest()
-        latest_ten_k = filing.obj()
-        financials = latest_ten_k.financials
+        filing = company.latest_tenk
+        financials = filing.financials
         
         # --------------------------------- #
         
         # Commands
 
-        income_statement = financials.income_statement
+        income_statement = financials.income
         balance_sheet = financials.balance_sheet
         cash_flow = financials.cash_flow
-        
-        curr_assets = financials.get('income', 0)
-        curr_liabs = financials.get('current_liabilities', 1)
-        current_ratio = curr_assets / curr_liabs
         
         # Main Page
 
@@ -80,6 +75,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
