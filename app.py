@@ -27,7 +27,7 @@ if ticker:
         
         # Get latest 10-K financials
         filings = company.get_filings(form="10-K")
-        latest_10k = filings.latest
+        latest_10k = company.get_filings(form="10-K").latest()
         financials = latest_10k.obj()
         
         # --------------------------------- #
@@ -83,5 +83,6 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
