@@ -27,7 +27,6 @@ if ticker:
         
         # Get latest 10-K financials
         financials = company.get_financials()
-        ten_q = company.lastest_tenq
 
         # --------------------------------- #
         
@@ -81,3 +80,4 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
