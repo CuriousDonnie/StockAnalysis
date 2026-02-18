@@ -34,9 +34,9 @@ if ticker:
         
         # Commands
 
-        income_statement = financials.income
+        income_statement = financials.income_statement
         balance_sheet = financials.balance_sheet
-        cash_flow = financials.cash_flow
+        cash_flow = financials.cashflow_statement
         
         # Main Page
 
@@ -76,6 +76,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
