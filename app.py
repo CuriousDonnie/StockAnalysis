@@ -36,7 +36,7 @@ if ticker:
 
         income_statement = financials.income_statement
         balance_sheet = financials.balance_sheet
-        cash_flow = financials.cash_flow_statement
+        cash_flow = financials.cash_flow
         
         curr_assets = financials.get('income', 0)
         curr_liabs = financials.get('current_liabilities', 1)
@@ -80,6 +80,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
