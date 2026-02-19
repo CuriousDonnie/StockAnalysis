@@ -54,19 +54,24 @@ if ticker:
         # Tabs
         tab1, tab2, tab3 = st.tabs(["Income Statement", "Balance Sheet", "Cash Flow"])
 
+        cols_to_show = ["label"] + [c for c in income_df.columns if "-" in str(c)]
+
         with tab1:
             st.markdown("### Income Statement")
-            income_df = income_statement(view="standard").to_dataframe()
+            income_df_raw = income_statement(view="standard").to_dataframe()
+            income_df = income_df_raw[[c for c in keep_cols if c in income_df.columns]]
             st.dataframe(income_df, use_container_width=True)
 
         with tab2:
             st.markdown("### Balance Sheet")
-            balance_df = balance_sheet(view="standard").to_dataframe()
+            balance_df_raw = balance_sheet(view="standard").to_dataframe()
+            balance_df = balance_df_raw[[c for c in keep_cols if c in income_df.columns]]
             st.dataframe(balance_df, use_container_width=True)
 
         with tab3:
             st.markdown("### Cash Flow")
-            cash_df = cash_flow(view="standard").to_dataframe()
+            cash_df_raw = cash_flow(view="standard").to_dataframe()
+            cash_df = cash_df_raw[[c for c in keep_cols if c in income_df.columns]]
             st.dataframe(cash_df, use_container_width=True)
 
     except Exception as e:
@@ -75,6 +80,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
