@@ -61,21 +61,21 @@ if ticker:
             # Rename the first column to 'Account' to avoid duplicate 'label' errors
             df_is.columns.values[0] = "Account"
             # Keep 'Account' and any column with a date format (####-##-##)
-            cols = ["Account"] + [c for c in df_is.columns if "-" in str(c)]
+            cols = ["label"] + [c for c in df_is.columns if "-" in str(c)]
             st.dataframe(df_is[cols], use_container_width=True, hide_index=True)
 
         with tab2:
             st.markdown("### Balance Sheet")
             df_bs = balance_sheet(view="standard").to_dataframe().reset_index()
             df_bs.columns.values[0] = "Account"
-            cols = ["Account"] + [c for c in df_bs.columns if "-" in str(c)]
+            cols = ["label"] + [c for c in df_bs.columns if "-" in str(c)]
             st.dataframe(df_bs[cols], use_container_width=True, hide_index=True)
 
         with tab3:
             st.markdown("### Cash Flow")
             df_cf = cash_flow(view="standard").to_dataframe().reset_index()
             df_cf.columns.values[0] = "Account"
-            cols = ["Account"] + [c for c in df_cf.columns if "-" in str(c)]
+            cols = ["label"] + [c for c in df_cf.columns if "-" in str(c)]
             st.dataframe(df_cf[cols], use_container_width=True, hide_index=True)
           
     except Exception as e:
@@ -84,6 +84,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
