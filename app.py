@@ -52,15 +52,11 @@ if ticker:
                 st.warning("Risk Factors text not found in this filing.")
 
         # Tabs
-# Tabs
         tab1, tab2, tab3 = st.tabs(["Income Statement", "Balance Sheet", "Cash Flow"])
 
         with tab1:
             st.markdown("### Income Statement")
-            # 1. Convert to DF and move index (labels) to a real column
             df = income_statement(view="standard").to_dataframe().reset_index().rename(columns={'index': 'label'})
-            
-            # 2. Identify date columns and build your selection
             cols_to_show = ["label"] + [c for c in df.columns if "-" in str(c)]
             
             # 3. Display only those columns
@@ -69,7 +65,6 @@ if ticker:
         with tab2:
             st.markdown("### Balance Sheet")
             df = balance_sheet(view="standard").to_dataframe().reset_index().rename(columns={'index': 'label'})
-            # We reuse the logic: label + any date columns found in this specific DF
             cols = ["label"] + [c for c in df.columns if "-" in str(c)]
             st.dataframe(df[cols], use_container_width=True)
 
@@ -85,6 +80,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
