@@ -56,27 +56,19 @@ if ticker:
 
         with tab1:
             st.markdown("### Income Statement")
-            # Convert to DF and move labels to a column
-            df_is = income_statement(view="standard").to_dataframe().reset_index()
-            # Rename the first column to 'Account' to avoid duplicate 'label' errors
-            df_is.columns.values[0] = "Account"
-            # Keep 'Account' and any column with a date format (####-##-##)
-            cols = ["label"] + [c for c in df_is.columns if "-" in str(c)]
-            st.dataframe(df_is[cols], use_container_width=True, hide_index=True)
+            # Using .to_dataframe() directly is what the docs recommend for clean tables
+            df_is = income_statement(view="standard").to_dataframe()
+            st.dataframe(df_is, use_container_width=True)
 
         with tab2:
             st.markdown("### Balance Sheet")
-            df_bs = balance_sheet(view="standard").to_dataframe().reset_index()
-            df_bs.columns.values[0] = "Account"
-            cols = ["label"] + [c for c in df_bs.columns if "-" in str(c)]
-            st.dataframe(df_bs[cols], use_container_width=True, hide_index=True)
+            df_bs = balance_sheet(view="standard").to_dataframe()
+            st.dataframe(df_bs, use_container_width=True)
 
         with tab3:
             st.markdown("### Cash Flow")
-            df_cf = cash_flow(view="standard").to_dataframe().reset_index()
-            df_cf.columns.values[0] = "Account"
-            cols = ["label"] + [c for c in df_cf.columns if "-" in str(c)]
-            st.dataframe(df_cf[cols], use_container_width=True, hide_index=True)
+            df_cf = cash_flow(view="standard").to_dataframe()
+            st.dataframe(df_cf, use_container_width=True)
           
     except Exception as e:
         st.error(f"Error loading {ticker}. Please ensure it is a valid US public company ticker.")
@@ -84,6 +76,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
