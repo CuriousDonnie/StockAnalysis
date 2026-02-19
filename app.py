@@ -58,12 +58,6 @@ if ticker:
             st.markdown("### Income Statement")
             income_df = income_statement(view="standard").to_dataframe()
             st.dataframe(income_df, use_container_width=True)
-            
-            # Simple visualization
-            st.markdown("#### Trends")
-            fig = px.bar(income_df.head(10), x='label', y='value', color='value', 
-                         title="Top Income Statement Line Items")
-            st.plotly_chart(fig, use_container_width=True)
 
         with tab2:
             st.markdown("### Balance Sheet")
@@ -81,6 +75,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
