@@ -55,28 +55,13 @@ if ticker:
         tab1, tab2, tab3 = st.tabs(["Income Statement", "Balance Sheet", "Cash Flow"])
 
         with tab1:
-            st.markdown("### Income Statement")
-            # 1. Reset index and ensure the first column is named 'Account' to avoid duplicates
-            df = income_statement(view="standard").to_dataframe().reset_index()
-            df.columns.values[0] = "Account" # Force the first column to be "Account"
-            
-            # 2. Select the first column (Account) + any columns with dates
-            cols = [df.columns[0]] + [c for c in df.columns if "-" in str(c)]
-            st.dataframe(df[cols], use_container_width=True)
+
         
         with tab2:
-            st.markdown("### Balance Sheet")
-            df = balance_sheet(view="standard").to_dataframe().reset_index()
-            df.columns.values[0] = "Account"
-            cols = [df.columns[0]] + [c for c in df.columns if "-" in str(c)]
-            st.dataframe(df[cols], use_container_width=True)
+
         
         with tab3:
-            st.markdown("### Cash Flow")
-            df = cash_flow(view="standard").to_dataframe().reset_index()
-            df.columns.values[0] = "Account"
-            cols = [df.columns[0]] + [c for c in df.columns if "-" in str(c)]
-            st.dataframe(df[cols], use_container_width=True)
+
             
     except Exception as e:
         st.error(f"Error loading {ticker}. Please ensure it is a valid US public company ticker.")
@@ -84,6 +69,7 @@ if ticker:
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
