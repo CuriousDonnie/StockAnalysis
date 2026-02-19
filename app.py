@@ -52,34 +52,40 @@ if ticker:
                 st.warning("Risk Factors text not found in this filing.")
 
         # Tabs
+# Tabs
         tab1, tab2, tab3 = st.tabs(["Income Statement", "Balance Sheet", "Cash Flow"])
-
-        cols_to_show = ["label"] + [c for c in income_df.columns if "-" in str(c)]
 
         with tab1:
             st.markdown("### Income Statement")
-            income_df_raw = income_statement(view="standard").to_dataframe()
-            income_df = income_df_raw[[c for c in keep_cols if c in income_df_raw.columns]]
-            st.dataframe(income_df, use_container_width=True)
+            # 1. Convert to DF and move index (labels) to a real column
+            df = income_statement(view="standard").to_dataframe().reset_index().rename(columns={'index': 'label'})
+            
+            # 2. Identify date columns and build your selection
+            cols_to_show = ["label"] + [c for c in df.columns if "-" in str(c)]
+            
+            # 3. Display only those columns
+            st.dataframe(df[cols_to_show], use_container_width=True)
 
         with tab2:
             st.markdown("### Balance Sheet")
-            balance_df_raw = balance_sheet(view="standard").to_dataframe()
-            balance_df = balance_df_raw[[c for c in keep_cols if c in balance_df_raw.columns]]
-            st.dataframe(balance_df, use_container_width=True)
+            df = balance_sheet(view="standard").to_dataframe().reset_index().rename(columns={'index': 'label'})
+            # We reuse the logic: label + any date columns found in this specific DF
+            cols = ["label"] + [c for c in df.columns if "-" in str(c)]
+            st.dataframe(df[cols], use_container_width=True)
 
         with tab3:
             st.markdown("### Cash Flow")
-            cash_df_raw = cash_flow(view="standard").to_dataframe()
-            cash_df = cash_df_raw[[c for c in keep_cols if c in cash_df_raw.columns]]
-            st.dataframe(cash_df, use_container_width=True)
-
+            df = cash_flow(view="standard").to_dataframe().reset_index().rename(columns={'index': 'label'})
+            cols = ["label"] + [c for c in df.columns if "-" in str(c)]
+            st.dataframe(df[cols], use_container_width=True)
+            
     except Exception as e:
         st.error(f"Error loading {ticker}. Please ensure it is a valid US public company ticker.")
         st.exception(e) # Useful for debugging during development
 
 else:
     st.info("Enter a valid ticker in the sidebar.")
+
 
 
 
